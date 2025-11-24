@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${villa.name} + ' — детайли'">Villa — детайли</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" th:href="@{/css/villa-details.css}">
+</head>
+<body class="details-page">
+
+<header class="page-header">
+    <div class="container">
+        <h1 class="title" th:text="${villa.name}">Име</h1>
+    </div>
+</header>
+
+<main class="container layout">
+    <section class="panel photo">
+        <img th:src="${villa.imageUrl}" alt="Снимка на [[${villa.name}]]">
+    </section>
+
+    <aside class="panel price-card">
+        <h3>Цена</h3>
+        <div class="price">
+            <span th:text="${#numbers.formatDecimal(villa.pricePerNight,1,2)}">0.00</span> лв/нощ
+        </div>
+
+        <ul class="meta">
+            <li><span>Местоположение:</span> <strong th:text="${villa.region}">—</strong></li>
+            <li><span>Капацитет:</span> <strong th:text="${villa.capacity}">—</strong></li>
+            <li><span>Собственик:</span> <strong th:text="${villa.ownerUsername}">—</strong></li>
+        </ul>
+
+        <a class="btn btn-primary" th:href="@{|/bookings/add/${villa.id}|}">Продължи към резервация</a>
+        <a class="btn btn-ghost" th:href="@{/villas}">Назад към каталога</a>
+    </aside>
+
+    <section class="panel desc">
+        <h3>Описание</h3>
+        <p th:text="${villa.description}">—</p>
+
+        <h3 style="margin-top:18px;">Удобства</h3>
+        <div class="chips">
+            <span class="chip" th:each="a : ${villa.amenities}" th:text="${a}">Amenity</span>
+        </div>
+    </section>
+
+    <section class="villa-reviews">
+        <h2>Отзиви</h2>
+
+        <div th:if="${villa.reviewCount == null or villa.reviewCount == 0}">
+            <p>Все още няма отзиви за тази вила.</p>
+        </div>
+
+        <div th:if="${villa.reviewCount != null and villa.reviewCount > 0}">
+            <p>
+                Среден рейтинг:
+                <strong th:text="${villa.averageRating}">4.5</strong> / 5
+                (на база <span th:text="${villa.reviewCount}">0</span> отзива)
+            </p>
+
+            <ul class="review-list">
+                <li th:each="r : ${villa.reviews}">
+                    <div class="review-rating">
+                        Оценка: <strong th:text="${r.rating}">5</strong> / 5
+                    </div>
+                    <div class="review-comment" th:text="${r.comment}">Коментар</div>
+                    <div class="review-date">
+                        <small th:text="${#temporals.format(r.createdOn, 'dd.MM.yyyy HH:mm')}">
+                            дата
+                        </small>
+                        <form th:action="@{|/villas/${villa.id}/reviews/${r.id}/delete|}"
+                              method="post" style="display:inline">
+                            <input type="hidden"
+                                   th:name="${_csrf.parameterName}"
+                                   th:value="${_csrf.token}"/>
+                            <button type="submit"
+                                    class="btn btn-delete"
+                                    onclick="return confirm('Сигурни ли сте, че искате да изтриете този отзив?');">
+                                Изтрий
+                            </button>
+                        </form>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <hr/>
+
+        <h3>Добави отзив</h3>
+        <form th:action="@{|/villas/${villa.id}/reviews|}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+            <label for="rating">Оценка (1–5):</label>
+            <select id="rating" name="rating" required>
+                <option value="5">5 - Отлично</option>
+                <option value="4">4 - Много добро</option>
+                <option value="3">3 - Добро</option>
+                <option value="2">2 - Задоволително</option>
+                <option value="1">1 - Лошо</option>
+            </select>
+
+            <label for="comment">Коментар:</label>
+            <textarea id="comment" name="comment" rows="3" placeholder="Сподели впечатленията си..."></textarea>
+
+            <button type="submit" class="btn">Изпрати отзив</button>
+        </form>
+    </section>
+
+</main>
+
+</body>
+</html>

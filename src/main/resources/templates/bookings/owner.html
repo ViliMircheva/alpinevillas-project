@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <title>Резервации за моите вили</title>
+    <link rel="stylesheet" th:href="@{/css/owner.css}">
+</head>
+<body>
+<main class="container">
+    <h1>Резервации за моите вили</h1>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Вила</th><th>Местоположение</th><th>От</th><th>До</th><th>Гости</th><th>Статус</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="b : ${bookings}">
+            <td th:text="${b.villaName}">Villa</td>
+            <td th:text="${b.villaRegion}">Region</td>
+            <td th:text="${b.checkIn}">2025-01-01</td>
+            <td th:text="${b.checkOut}">2025-01-03</td>
+            <td th:text="${b.guests}">2</td>
+            <td th:text="${b.status}">PENDING</td>
+            <td>
+                <form th:if="${b.status == T(bg.softuni.alpinevillas.entities.BookingStatus).PENDING}"
+                      th:action="@{/bookings/{id}/confirm(id=${b.id})}"
+                      method="post"
+                      style="display:inline">
+                    <input type="hidden"
+                           th:name="${_csrf.parameterName}"
+                           th:value="${_csrf.token}"/>
+                    <button type="submit">Потвърди</button>
+                </form>
+                <form th:if="${b.status == T(bg.softuni.alpinevillas.entities.BookingStatus).PENDING}"
+                      th:action="@{/bookings/{id}/decline(id=${b.id})}"
+                      method="post"
+                      style="display:inline">
+                    <input type="hidden"
+                           th:name="${_csrf.parameterName}"
+                           th:value="${_csrf.token}"/>
+                    <button type="submit">Откажи</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div style="text-align:center; margin-top: 40px;">
+        <a class="btn-back" th:href="@{/villas}">⬅ Назад към каталога</a>
+    </div>
+</main>
+</body>
+</html>

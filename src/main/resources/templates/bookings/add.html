@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <title>Резервирай</title>
+    <link rel="stylesheet" th:href="@{/css/addbooking.css}">
+</head>
+
+<body class="simple-bg" style="--bg: url('https://plus.unsplash.com/premium_photo-1734543932190-e706f6738431?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1171');">
+<main class="simple-page">
+    <h1 class="page-title">Резервирай</h1>
+    <div class="error-box" th:if="${error}" th:text="${error}"></div>
+    <div class="card">
+        <form th:action="@{/bookings/add/{id}(id=${villa.id})}" th:object="${booking}" method="post" class="form-grid">
+            <div class="field">
+                <div class="flash error" th:if="${#fields.hasErrors('*')}">
+                    Моля, коригирайте грешките във формата.
+                </div>
+                <label>Check-in</label>
+                <input type="date" th:field="*{checkIn}" th:attr="min=${#dates.format(#dates.createNow(),'yyyy-MM-dd')}" required>
+            </div>
+            <div class="field">
+                <label>Check-out</label>
+                <input type="date" th:field="*{checkOut}" th:attr="min=${#dates.format(#dates.createNow(),'yyyy-MM-dd')}" required>
+            </div>
+            <div class="field">
+                <label>Гости</label>
+                <input type="number" min="1" th:field="*{guests}" required>
+            </div>
+
+            <div class="form-actions">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <button class="btn" type="submit">Запази</button>
+                <a class="btn ghost" th:href="@{/villas}">Назад</a>
+            </div>
+        </form>
+    </div>
+</main>
+</body>
+</html>

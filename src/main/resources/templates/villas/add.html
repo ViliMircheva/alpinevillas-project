@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <title>Добави вила</title>
+    <link rel="stylesheet" th:href="@{/css/addvilla.css}">
+</head>
+<body>
+<main class="container">
+    <h1>Добави нова вила</h1>
+
+    <form th:action="@{/villas/add}" th:object="${villa}" method="post">
+        <p><input placeholder="Име" th:field="*{name}" required></p>
+        <p><input placeholder="Местоположение" th:field="*{region}" required></p>
+        <p><input placeholder="Капацитет" type="number" th:field="*{capacity}" required></p>
+        <p><input placeholder="Цена/нощ" type="number" th:field="*{pricePerNight}" required></p>
+        <p><input placeholder="Снимка (URL)" th:field="*{imageUrl}"></p>
+        <p><textarea placeholder="Описание" th:field="*{description}" rows="3"></textarea></p>
+        <h3 style="text-align:center; color:white; margin-top:20px;">Удобства:</h3>
+        <div class="amenities">
+            <div th:each="a : ${amenities}">
+                <label class="amenity-item">
+                    <input type="checkbox"
+                           name="amenityIds"
+                           th:value="${a.id}">
+                    <span th:text="${a.name}"></span>
+                </label>
+            </div>
+        </div>
+        <button type="submit">Запази</button>
+    </form>
+</main>
+</body>
+</html>

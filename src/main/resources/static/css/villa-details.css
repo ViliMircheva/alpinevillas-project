@@ -1,0 +1,226 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+}
+
+body.details-page {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #f1f1f1;
+    background: url("https://images.unsplash.com/photo-1504197287382-ffa2f445ed34?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1169")
+    no-repeat center center fixed;
+    background-size: cover;
+    position: relative;
+}
+
+body.details-page::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: -1;
+}
+
+.container {
+    width: min(1200px, 92%);
+    margin-inline: auto;
+}
+
+.page-header {
+    padding-top: 100px;
+    padding-bottom: 24px;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.title {
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.75), 0 4px 14px rgba(0, 0, 0, 0.85);
+}
+
+.subtitle {
+    margin-top: 8px;
+    opacity: 0.92;
+    font-size: 18px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 12px 22px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 700;
+    transition: transform .05s ease, filter .15s ease, background .15s;
+    margin-top: 18px;
+}
+
+.btn-primary {
+    background: #3a86ff;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    filter: brightness(1.07);
+}
+
+.btn-ghost {
+    border: 1.5px solid rgba(255, 255, 255, 0.75);
+    color: #fff;
+    background: transparent;
+}
+
+.btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    grid-template-areas:
+    "photo price"
+    "desc  price";
+    gap: 24px;
+    align-items: start;
+    margin: 18px 0 40px;
+}
+
+.panel {
+    border-radius: 18px;
+    background: rgba(20, 20, 22, 0.55);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    padding: 22px;
+}
+
+.photo {
+    grid-area: photo;
+    height: 240px;
+    overflow: hidden;
+    border-radius: 14px;
+    margin-top: 10px;
+}
+
+.photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 14px;
+    transition: transform 0.5s ease;
+}
+
+.photo img:hover {
+    transform: scale(1.05);
+}
+
+.price-card {
+    grid-area: price;
+}
+
+.price-card h3 {
+    font-size: 22px;
+    margin-bottom: 8px;
+}
+
+.price {
+    font-size: 32px;
+    font-weight: 900;
+    margin: 4px 0 16px;
+}
+
+.meta {
+    list-style: none;
+    margin: 0 0 18px;
+    padding: 0;
+    border-top: 1px dashed rgba(255, 255, 255, 0.12);
+}
+
+.meta li {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.12);
+    font-size: 16px;
+}
+
+.meta li span {
+    opacity: 0.85;
+}
+
+.desc {
+    grid-area: desc;
+}
+
+.desc h3 {
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.desc p {
+    opacity: 0.92;
+    line-height: 1.7;
+}
+
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.chip {
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    color: #eaeaea;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+@media (max-width: 960px) {
+    .layout {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+      "photo"
+      "price"
+      "desc";
+    }
+
+    .photo {
+        height: 200px;
+    }
+}
+
+.photo {
+    grid-area: photo;
+    width: 90%;
+    max-width: 420px;
+    height: 240px;
+    overflow: hidden;
+    border-radius: 18px;
+    margin-top: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-inline: auto;
+}
+
+.photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 18px;
+    transition: transform 0.5s ease;
+}
+
+.photo img:hover {
+    transform: scale(1.04);
+}

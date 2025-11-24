@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:margin-top="http://www.w3.org/1999/xhtml" lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <title>Моите резервации</title>
+    <link rel="stylesheet" th:href="@{/css/mine.css}">
+</head>
+<body>
+<main class="container">
+    <h1>Моите резервации</h1>
+
+    <div th:if="${#lists.isEmpty(bookings)}">
+        <p>Нямаш активни резервации.</p>
+    </div>
+
+    <div th:if="${!#lists.isEmpty(bookings)}">
+        <table>
+            <thead>
+            <tr>
+                <th>Вила</th>
+                <th>Местоположение</th>
+                <th>От</th>
+                <th>До</th>
+                <th>Гости</th>
+                <th>Статус</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="b : ${bookings}">
+                <td th:text="${b.villaName}">Villa</td>
+                <td th:text="${b.villaRegion}">Region</td>
+                <td th:text="${b.checkIn}">2025-01-01</td>
+                <td th:text="${b.checkOut}">2025-01-03</td>
+                <td th:text="${b.guests}">2</td>
+                <td th:text="${b.status}">PENDING</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div style="text-align:center; margin-top: 40px;">
+        <a class="btn-back" th:href="@{/villas}">⬅ Назад към каталога</a>
+    </div>
+</main>
+</body>
+</html>
