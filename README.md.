@@ -1,0 +1,131 @@
+# Alpine Villas – Booking Platform
+
+## Overview
+AlpineVillas is a Spring Boot web application designed for users to browse, book and manage villa reservations across different locations. The application includes authentication, authorization, role-based access, scheduling tasks, caching, server-side validation, logging, and dynamic UI pages served via Thymeleaf.
+
+The system communicates with an external microservice called **ReviewService**, which stores and manages villa reviews.
+
+---
+
+## Tech Stack
+| Technology | Version |
+|------------|---------|
+| Java       | 17      |
+| Spring Boot| 3.4.0   |
+| Database   | MySQL   |
+| UI         | Spring MVC + Thymeleaf |
+| Security   | Spring Security with CSRF enabled |
+| Inter-App Communication | Feign Client |
+
+---
+
+## Features (Main Application)
+✔ User registration and login  
+✔ Role-based authorization (USER / ADMIN)  
+✔ Users can:
+- view villas catalog
+- browse villa details
+- book a villa for given date range
+- cancel or confirm bookings
+- leave reviews (integrated via review microservice)
+- view and edit their profile
+
+✔ Admins can:
+- block/unblock users
+- view all users
+- manage villa ownership-related data
+
+✔ Owners can:
+- add new villas
+- edit or delete their villas
+- confirm or reject booking requests
+
+---
+
+## Domain Entities
+- `User`
+- `Role`
+- `Villa`
+- `Booking`
+- `Amenity`
+
+Entity relationships include:
+- `User` → many `Booking`
+- `Villa` → many `Booking`
+- `Villa` → many `Amenity`
+
+All entities use UUID identifiers.
+
+---
+
+## REST Communication
+This application calls the Review Microservice through Feign Client:
+
+### Triggered actions:
+🔹 Create review  
+🔹 Delete review  
+🔹 Get all reviews by villa  
+
+All calls cause state changes inside the microservice DB.
+
+---
+
+## Scheduling
+### 1. Cron-based job:
+Runs every day at **14:00**  
+
+Automatically marks expired confirmed reservations as **FINISHED**.
+
+---
+
+## Caching
+The following cache groups are used:
+
+| Cache Name | Purpose |
+|------------|---------|
+| `villasCatalog` | caches villa listing page |
+| `villaDetails`  | caches details for a specific villa |
+
+Cache is invalidated when:
+✔ villa gets edited  
+✔ amenities change  
+
+---
+
+## Validation and Error Handling
+The project supports:
+✔ DTO-level validation  
+✔ entity-level validation  
+✔ meaningful messages in UI  
+✔ custom exception handlers  
+
+Custom exceptions include:
+- `ForbiddenOperationException`
+- `NotFoundException`
+- `OverlappingBookingException`
+
+---
+
+## Logging
+Logging is performed using SLF4J:
+- all service operations log events
+- scheduling prints processed items
+- review calls log communication events
+
+---
+
+## Testing
+Implemented tests:
+### Unit Tests
+- Testing service logic
+
+### Integration Tests
+- Testing repository persistence
+
+### API Tests
+- Testing controllers via MockMvc
+
+---
+
+## How to Run
+### Backend
