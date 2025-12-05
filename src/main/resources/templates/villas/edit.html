@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактиране на вила</title>
+
+    <link rel="stylesheet" th:href="@{/css/edit-villa.css}">
+</head>
+
+<body>
+
+<div class="background">
+
+    <div class="edit-container">
+
+        <h1>Редактиране на вила</h1>
+
+        <form th:action="@{'/villas/edit/' + ${villa.id}}"
+              th:object="${villa}"
+              method="post">
+
+            <div class="form-group">
+                <label>Име:</label>
+                <input type="text" th:field="*{name}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Регион:</label>
+                <input type="text" th:field="*{region}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Капацитет:</label>
+                <input type="number" th:field="*{capacity}" min="1" required>
+            </div>
+
+            <div class="form-group">
+                <label>Цена на вечер:</label>
+                <input type="number" step="0.01" th:field="*{pricePerNight}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Описание:</label>
+                <textarea th:field="*{description}" rows="4"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Image URL:</label>
+                <input type="text" th:field="*{imageUrl}">
+            </div>
+
+            <button type="submit" class="btn-save">Запази</button>
+
+        </form>
+
+        <a th:href="@{'/villas/' + ${villa.id}}" class="back-link">Назад</a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

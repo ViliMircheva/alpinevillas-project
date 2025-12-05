@@ -1,5 +1,5 @@
 package bg.softuni.alpinevillas.entities;
 
 public enum BookingStatus {
-    PENDING, CONFIRMED, CANCELLED
+    PENDING, CONFIRMED, CANCELLED, FINISHED
 }

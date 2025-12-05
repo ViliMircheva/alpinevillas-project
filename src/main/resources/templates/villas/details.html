@@ -34,6 +34,12 @@
 
         <a class="btn btn-primary" th:href="@{|/bookings/add/${villa.id}|}">Продължи към резервация</a>
         <a class="btn btn-ghost" th:href="@{/villas}">Назад към каталога</a>
+        <div th:if="${villa.ownerUsername == #authentication.name}">
+            <a th:href="@{/villas/edit/{id}(id=${villa.id})}" class="btn btn-warning">
+                Редактирай
+            </a>
+        </div>
+
     </aside>
 
     <section class="panel desc">

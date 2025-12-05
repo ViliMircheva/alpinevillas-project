@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="bg">
+<head>
+    <title>Admin - Users</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<header>
+    <h1>Управление на потребители</h1>
+    <a th:href="@{/villas}">Каталог</a>
+</header>
+
+<main>
+    <div th:if="${error}" class="error">
+        <p th:text="${error}"></p>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Потребител</th>
+            <th>Имейл</th>
+            <th>Роли</th>
+            <th>Блокиран</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="u : ${users}">
+            <td th:text="${u.username}"></td>
+            <td th:text="${u.email}"></td>
+            <td th:text="${#strings.listJoin(u.roles, ', ')}"></td>
+            <td th:text="${u.blocked} ? 'Да' : 'Не'"></td>
+            <td>
+                <form th:action="@{|/admin/users/${u.id}/block|}" method="post" th:if="${!u.blocked}">
+                    <button type="submit">Блокирай</button>
+                </form>
+                <form th:action="@{|/admin/users/${u.id}/unblock|}" method="post" th:if="${u.blocked}">
+                    <button type="submit">Деблокирай</button>
+                </form>
+
+                <form th:action="@{|/admin/users/${u.id}/grant-admin|}" method="post"
+                      th:if="${!u.roles.contains('ADMIN')}">
+                    <button type="submit">Направи ADMIN</button>
+                </form>
+                <form th:action="@{|/admin/users/${u.id}/revoke-admin|}" method="post"
+                      th:if="${u.roles.contains('ADMIN')}">
+                    <button type="submit">Премахни ADMIN</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

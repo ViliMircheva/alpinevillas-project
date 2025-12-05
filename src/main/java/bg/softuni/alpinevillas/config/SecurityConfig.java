@@ -4,6 +4,7 @@ import bg.softuni.alpinevillas.entities.User;
 import bg.softuni.alpinevillas.repositories.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,10 +24,21 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/villas", "/villas/**",
-                                "/css/**", "/js/**", "/images/**", "/register").permitAll()
-                        .requestMatchers("/bookings/**").authenticated()
-                        .anyRequest().permitAll()
+                        .requestMatchers("/", "/home", "/css/**", "/js/**", "/images/**", "/register", "/login")
+                        .permitAll()
+
+                        .requestMatchers("/villas/add", "/villas/delete/**").authenticated()
+
+                        .requestMatchers("/bookings/**")
+                        .authenticated()
+
+                        .requestMatchers(HttpMethod.GET, "/villas", "/villas/*").permitAll()
+
+                        .requestMatchers("/profile/**").authenticated()
+
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+
+                        .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
@@ -42,8 +54,9 @@ public class SecurityConfig {
                         .permitAll()
                 );
 
-                return http.build();
+        return http.build();
     }
+
 
     @Bean
     public UserDetailsService userDetailsService(UserRepository users) {

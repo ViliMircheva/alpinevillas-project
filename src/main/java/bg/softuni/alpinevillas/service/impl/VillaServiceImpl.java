@@ -1,4 +1,7 @@
 package bg.softuni.alpinevillas.service.impl;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
+
 
 import bg.softuni.alpinevillas.entities.Amenity;
 import bg.softuni.alpinevillas.entities.User;
@@ -13,6 +16,7 @@ import bg.softuni.alpinevillas.service.exception.ForbiddenOperationException;
 import bg.softuni.alpinevillas.web.dto.VillaCreateDto;
 import bg.softuni.alpinevillas.web.dto.VillaDetailsDto;
 import bg.softuni.alpinevillas.service.exception.NotFoundException;
+import bg.softuni.alpinevillas.web.dto.VillaEditDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +43,7 @@ public class VillaServiceImpl implements VillaService {
     }
 
     @Override
+    @Cacheable("villasCatalog")
     public List<VillaDetailsDto> listAll() {
         return villaRepository.findAll()
                 .stream()
@@ -47,6 +52,7 @@ public class VillaServiceImpl implements VillaService {
     }
 
     @Override
+    @Cacheable(value = "villaDetails", key = "#id")
     public VillaDetailsDto getDetails(UUID id) {
         Villa v = villaRepository.findByIdWithAmenities(id)
                 .orElseThrow(() -> new NotFoundException("Villa not found"));
@@ -66,7 +72,7 @@ public class VillaServiceImpl implements VillaService {
                         .toList());
 
         try {
-            var reviews = reviewClient.getReviews(id);
+            List<ReviewDto> reviews = reviewClient.getReviews(id);
             dto.setReviews(reviews);
 
             if (reviews != null && !reviews.isEmpty()) {
@@ -95,6 +101,7 @@ public class VillaServiceImpl implements VillaService {
 
     @Override
     @Transactional
+    @CacheEvict(value = {"villasCatalog"}, allEntries = true)
     public UUID createVilla(VillaCreateDto dto, String ownerUsername) {
         User owner = userRepository.findByUsername(ownerUsername)
                 .orElseThrow(() -> new NotFoundException("Owner not found"));
@@ -133,6 +140,7 @@ public class VillaServiceImpl implements VillaService {
 
     @Override
     @Transactional
+    @CacheEvict(value = {"villasCatalog", "villaDetails"}, allEntries = true)
     public void deleteVilla(UUID id, String username) {
         Villa villa = villaRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Вилата не е намерена."));
@@ -150,4 +158,62 @@ public class VillaServiceImpl implements VillaService {
 
         villaRepository.delete(villa);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public VillaEditDto getEditData(UUID id, String username) {
+        Villa v = villaRepository.findByIdWithAmenities(id)
+                .orElseThrow(() -> new NotFoundException("Вилата не е намерена."));
+
+        if (!v.getOwner().getUsername().equals(username)) {
+            throw new ForbiddenOperationException("Нямате право да редактирате тази вила.");
+        }
+
+        VillaEditDto dto = new VillaEditDto();
+        dto.setId(v.getId());
+        dto.setName(v.getName());
+        dto.setRegion(v.getRegion());
+        dto.setCapacity(v.getCapacity());
+        dto.setPricePerNight(v.getPricePerNight());
+        dto.setDescription(v.getDescription());
+        dto.setImageUrl(v.getImageUrl());
+        dto.setAmenityIds(
+                v.getAmenities().stream()
+                        .map(Amenity::getId)
+                        .toList()
+        );
+
+        return dto;
+    }
+
+    @CacheEvict(cacheNames = {"villasCatalog", "villaDetails"}, allEntries = true)
+    @Override
+    @Transactional
+    public void editVilla(VillaEditDto dto, String username) {
+        Villa v = villaRepository.findById(dto.getId())
+                .orElseThrow(() -> new NotFoundException("Вилата не е намерена."));
+
+        if (!v.getOwner().getUsername().equals(username)) {
+            throw new ForbiddenOperationException("Нямате право да редактирате тази вила.");
+        }
+
+        v.setName(dto.getName());
+        v.setRegion(dto.getRegion());
+        v.setCapacity(dto.getCapacity());
+        v.setPricePerNight(dto.getPricePerNight());
+        v.setDescription(dto.getDescription());
+        v.setImageUrl(dto.getImageUrl());
+
+        if (dto.getAmenityIds() != null) {
+            v.setAmenities(new HashSet<>(amenityRepository.findAllById(dto.getAmenityIds())));
+        }
+    }
+
+    @Override
+    @CacheEvict(cacheNames = "villaDetails", key = "#villaId")
+    public void evictVillaCache(UUID villaId) {
+    }
+
+
+
 }

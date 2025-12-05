@@ -5,6 +5,8 @@ import bg.softuni.alpinevillas.integration.review.ReviewClient;
 import bg.softuni.alpinevillas.repositories.AmenityRepository;
 import bg.softuni.alpinevillas.service.VillaService;
 import bg.softuni.alpinevillas.web.dto.VillaCreateDto;
+import bg.softuni.alpinevillas.web.dto.VillaDetailsDto;
+import bg.softuni.alpinevillas.web.dto.VillaEditDto;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -40,6 +42,35 @@ public class VillaController {
         model.addAttribute("villa", villaService.getDetails(id));
         return "villas/details";
     }
+
+
+    @GetMapping("/edit/{id}")
+    public String editForm(@PathVariable UUID id,
+                           @AuthenticationPrincipal(expression = "username") String username,
+                           Model model) {
+
+        VillaDetailsDto villa = villaService.getDetails(id);
+
+        if (!villa.getOwnerUsername().equals(username)) {
+            return "redirect:/villas/" + id;
+        }
+
+        VillaEditDto dto = new VillaEditDto();
+        dto.setId(villa.getId());
+        dto.setName(villa.getName());
+        dto.setRegion(villa.getRegion());
+        dto.setCapacity(villa.getCapacity());
+        dto.setPricePerNight(villa.getPricePerNight());
+        dto.setDescription(villa.getDescription());
+        dto.setImageUrl(villa.getImageUrl());
+        dto.setAmenityIds(null);
+
+        model.addAttribute("villa", dto);
+        model.addAttribute("amenities", amenityRepository.findAll());
+
+        return "villas/edit";
+    }
+
 
     @GetMapping("/add")
     public String addForm(Model model) {
@@ -85,6 +116,30 @@ public class VillaController {
             return "villas/add";
         }
     }
+
+    @PostMapping("/edit/{id}")
+    public String editVilla(@PathVariable UUID id,
+                            @Valid @ModelAttribute("villa") VillaEditDto dto,
+                            BindingResult br,
+                            @AuthenticationPrincipal(expression = "username") String username,
+                            Model model,
+                            RedirectAttributes ra) {
+
+        if (br.hasErrors()) {
+            model.addAttribute("amenities", amenityRepository.findAll());
+            return "villas/edit";
+        }
+
+        try {
+            villaService.editVilla(dto, username);
+            ra.addFlashAttribute("msg", "Промените са запазени успешно!");
+        } catch (RuntimeException ex) {
+            ra.addFlashAttribute("error", ex.getMessage());
+        }
+
+        return "redirect:/villas/" + id;
+    }
+
 
     @PostMapping("/delete/{id}")
     public String deleteVilla(@PathVariable UUID id,

@@ -1,6 +1,7 @@
 package bg.softuni.alpinevillas.repositories;
 
 import bg.softuni.alpinevillas.entities.Booking;
+import bg.softuni.alpinevillas.entities.BookingStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import java.time.LocalDate;
@@ -28,4 +29,8 @@ public interface BookingRepository extends JpaRepository<Booking, UUID> {
 """)
     List<Booking> findAllWithVillaAndUserByVillaOwnerUsernameOrderByCheckInDesc(String ownerUsername);
 
+
+    List<Booking> findAllByStatusAndCheckOutLessThanEqual(
+            BookingStatus status,
+            LocalDate checkOut);
 }

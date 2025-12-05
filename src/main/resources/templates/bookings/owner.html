@@ -22,7 +22,13 @@
             <td th:text="${b.checkIn}">2025-01-01</td>
             <td th:text="${b.checkOut}">2025-01-03</td>
             <td th:text="${b.guests}">2</td>
-            <td th:text="${b.status}">PENDING</td>
+            <td th:switch="${b.status.name()}">
+                <span th:case="'PENDING'">PENDING</span>
+                <span th:case="'CONFIRMED'">CONFIRMED</span>
+                <span th:case="'CANCELLED'">CANCELLED</span>
+                <span th:case="'FINISHED'">FINISHED</span>
+                <span th:case="*">UNKNOWN</span>
+            </td>
             <td>
                 <form th:if="${b.status == T(bg.softuni.alpinevillas.entities.BookingStatus).PENDING}"
                       th:action="@{/bookings/{id}/confirm(id=${b.id})}"
