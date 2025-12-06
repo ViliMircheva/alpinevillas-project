@@ -206,9 +206,6 @@ public class UserServiceImpl implements UserService {
 
         user.setEmail(dto.getEmail());
         userRepository.save(user);
-
-        // имаш вече logger в класа – просто логни
-        // log.info("User {} updated profile.", username);
     }
 
 }
