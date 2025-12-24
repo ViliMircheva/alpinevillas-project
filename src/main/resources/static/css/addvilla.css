@@ -92,6 +92,29 @@ textarea::placeholder {
     opacity: 1;
 }
 
+.actions{
+    display:flex;
+    align-items:center;
+    margin-left: 16px;             /* 👈 разстоянието между Запази и Назад */
+    margin-top:20px;
+}
+
+/* Назад – обикновен бял текст */
+.back-link{
+        color: #fff;
+        text-decoration: none;
+        font-weight: 700;
+        opacity: 0.9;
+        margin-left: 16px;
+    }
+
+
+
+.back-link:hover{
+    text-decoration:underline;
+    opacity:1;
+}
+
 .amenities {
     display: flex;
     flex-direction: column;

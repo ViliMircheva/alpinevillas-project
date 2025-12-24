@@ -26,10 +26,6 @@ public class ProfileController {
     @GetMapping
     public String profile(@AuthenticationPrincipal(expression = "username") String username,
                           Model model) {
-        if (username == null) {
-            return "redirect:/login";
-        }
-
         if (!model.containsAttribute("profile")) {
             UserProfileDto dto = userService.getProfile(username);
             model.addAttribute("profile", dto);
@@ -43,27 +39,15 @@ public class ProfileController {
                          @Valid @ModelAttribute("profile") UserProfileDto profile,
                          BindingResult br,
                          RedirectAttributes ra) {
-
-        if (username == null) {
-            return "redirect:/login";
-        }
-
         if (br.hasErrors()) {
             ra.addFlashAttribute("org.springframework.validation.BindingResult.profile", br);
             ra.addFlashAttribute("profile", profile);
             return "redirect:/profile";
         }
-
-        try {
-            userService.updateProfile(username, profile);
-            ra.addFlashAttribute("msg", "Профилът е обновен.");
-        } catch (RuntimeException ex) {
-            ra.addFlashAttribute("error", ex.getMessage());
-            ra.addFlashAttribute("profile", profile);
-        }
-
+        userService.updateProfile(username, profile);
+        ra.addFlashAttribute("msg", "Профилът е обновен.");
         return "redirect:/profile";
-    }
 
+    }
 
 }

@@ -6,10 +6,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -33,58 +30,29 @@ public class AdminUserController {
 
     @PostMapping("/{id}/block")
     public String blockUser(@PathVariable UUID id,
-                            @AuthenticationPrincipal UserDetails admin,
-                            Model model) {
-
-        try {
-            userService.blockUser(id, admin.getUsername());
-        } catch (RuntimeException ex) {
-            model.addAttribute("error", ex.getMessage());
-        }
-
+                            @AuthenticationPrincipal UserDetails admin) {
+        userService.blockUser(id, admin.getUsername());
         return "redirect:/admin/users";
     }
 
     @PostMapping("/{id}/unblock")
     public String unblockUser(@PathVariable UUID id,
-                              @AuthenticationPrincipal UserDetails admin,
-                              Model model) {
-
-        try {
-            userService.unblockUser(id, admin.getUsername());
-        } catch (RuntimeException ex) {
-            model.addAttribute("error", ex.getMessage());
-        }
-
+                              @AuthenticationPrincipal UserDetails admin) {
+        userService.unblockUser(id, admin.getUsername());
         return "redirect:/admin/users";
     }
 
     @PostMapping("/{id}/grant-admin")
     public String grantAdmin(@PathVariable UUID id,
-                             @AuthenticationPrincipal UserDetails admin,
-                             Model model) {
-
-        try {
-            userService.grantAdmin(id, admin.getUsername());
-        } catch (RuntimeException ex) {
-            model.addAttribute("error", ex.getMessage());
-        }
-
+                             @AuthenticationPrincipal UserDetails admin) {
+        userService.grantAdmin(id, admin.getUsername());
         return "redirect:/admin/users";
     }
 
     @PostMapping("/{id}/revoke-admin")
     public String revokeAdmin(@PathVariable UUID id,
-                              @AuthenticationPrincipal UserDetails admin,
-                              Model model) {
-
-        try {
-            userService.revokeAdmin(id, admin.getUsername());
-        } catch (RuntimeException ex) {
-            model.addAttribute("error", ex.getMessage());
-        }
-
+                              @AuthenticationPrincipal UserDetails admin) {
+        userService.revokeAdmin(id, admin.getUsername());
         return "redirect:/admin/users";
     }
-
 }

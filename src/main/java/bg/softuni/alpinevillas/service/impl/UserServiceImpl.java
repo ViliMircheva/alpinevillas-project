@@ -5,6 +5,7 @@ import bg.softuni.alpinevillas.entities.User;
 import bg.softuni.alpinevillas.repositories.RoleRepository;
 import bg.softuni.alpinevillas.repositories.UserRepository;
 import bg.softuni.alpinevillas.service.UserService;
+import bg.softuni.alpinevillas.service.exception.*;
 import bg.softuni.alpinevillas.web.dto.RegistrationDto;
 import bg.softuni.alpinevillas.web.dto.UserAdminViewDto;
 import bg.softuni.alpinevillas.web.dto.UserProfileDto;
@@ -24,7 +25,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-    private static final Logger log = LoggerFactory.getLogger(BookingServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
     public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
@@ -37,15 +38,15 @@ public class UserServiceImpl implements UserService {
     public void register(RegistrationDto dto) {
 
         if (!dto.getPassword().equals(dto.getConfirmPassword())) {
-            throw new IllegalArgumentException("Паролите не съвпадат.");
+            throw new RegistrationException("Паролите не съвпадат.");
         }
 
         if (userRepository.findByUsername(dto.getUsername()).isPresent()) {
-            throw new IllegalArgumentException("Потребителското име е заето.");
+            throw new RegistrationException("Потребителското име е заето.");
         }
 
         if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Имейлът вече е регистриран.");
+            throw new RegistrationException("Имейлът вече е регистриран.");
         }
 
         Role userRole = roleRepository.findByName("USER")
@@ -59,9 +60,9 @@ public class UserServiceImpl implements UserService {
         u.getRoles().add(userRole);
 
         log.info("New user registered: {}", u.getUsername());
-
         userRepository.save(u);
     }
+
 
     @Override
     @Transactional
@@ -88,20 +89,25 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void blockUser(UUID userId, String adminUsername) {
         User admin = userRepository.findByUsername(adminUsername)
-                .orElseThrow(() -> new IllegalArgumentException("Админът не е намерен."));
-
-        if (admin.getId().equals(userId)) {
-            throw new IllegalArgumentException("Не можете да блокирате себе си.");
-        }
+                .orElseThrow(() -> new AdminUserActionException("Админът не е намерен."));
 
         boolean isAdmin = admin.getRoles().stream()
                 .anyMatch(r -> "ADMIN".equals(r.getName()));
+
         if (!isAdmin) {
-            throw new IllegalStateException("Нямате права да блокирате потребители.");
+            throw new AdminUserActionException("Нямате права да блокирате потребители.");
+        }
+
+        if (admin.getId().equals(userId)) {
+            throw new AdminUserActionException("Не можете да блокирате себе си.");
         }
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Потребителят не е намерен."));
+                .orElseThrow(() -> new AdminUserActionException("Потребителят не е намерен."));
+
+        if (user.isBlocked()) {
+            return;
+        }
 
         user.setBlocked(true);
         userRepository.save(user);
@@ -113,16 +119,20 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void unblockUser(UUID userId, String adminUsername) {
         User admin = userRepository.findByUsername(adminUsername)
-                .orElseThrow(() -> new IllegalArgumentException("Админът не е намерен."));
+                .orElseThrow(() -> new AdminUserActionException("Админът не е намерен."));
 
         boolean isAdmin = admin.getRoles().stream()
                 .anyMatch(r -> "ADMIN".equals(r.getName()));
         if (!isAdmin) {
-            throw new IllegalStateException("Нямате права да деблокирате потребители.");
+            throw new AdminUserActionException("Нямате права да деблокирате потребители.");
         }
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Потребителят не е намерен."));
+                .orElseThrow(() -> new AdminUserActionException("Потребителят не е намерен."));
+
+        if (!user.isBlocked()) {
+            return;
+        }
 
         user.setBlocked(false);
         userRepository.save(user);
@@ -135,19 +145,26 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void grantAdmin(UUID userId, String adminUsername) {
         User admin = userRepository.findByUsername(adminUsername)
-                .orElseThrow(() -> new IllegalArgumentException("Админът не е намерен."));
+                .orElseThrow(() -> new AdminUserActionException("Админът не е намерен."));
 
         boolean isAdmin = admin.getRoles().stream()
                 .anyMatch(r -> "ADMIN".equals(r.getName()));
         if (!isAdmin) {
-            throw new IllegalStateException("Нямате права да променяте роли.");
+            throw new AdminUserActionException("Нямате права да променяте роли.");
         }
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Потребителят не е намерен."));
+                .orElseThrow(() -> new AdminUserActionException("Потребителят не е намерен."));
 
         Role adminRole = roleRepository.findByName("ADMIN")
-                .orElseThrow(() -> new IllegalStateException("Роля ADMIN липсва."));
+                .orElseThrow(() -> new AdminUserActionException("Роля ADMIN липсва."));
+
+        boolean alreadyAdmin = user.getRoles().stream()
+                .anyMatch(r -> "ADMIN".equals(r.getName()));
+
+        if (alreadyAdmin) {
+            return;
+        }
 
         user.getRoles().add(adminRole);
         userRepository.save(user);
@@ -160,19 +177,29 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void revokeAdmin(UUID userId, String adminUsername) {
         User admin = userRepository.findByUsername(adminUsername)
-                .orElseThrow(() -> new IllegalArgumentException("Админът не е намерен."));
+                .orElseThrow(() -> new AdminUserActionException("Админът не е намерен."));
 
         boolean isAdmin = admin.getRoles().stream()
                 .anyMatch(r -> "ADMIN".equals(r.getName()));
         if (!isAdmin) {
-            throw new IllegalStateException("Нямате права да променяте роли.");
+            throw new AdminUserActionException("Нямате права да променяте роли.");
+        }
+        if (admin.getId().equals(userId)) {
+            throw new AdminUserActionException("Не можете да си махнете ADMIN ролята.");
         }
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Потребителят не е намерен."));
+                .orElseThrow(() -> new AdminUserActionException("Потребителят не е намерен."));
 
         Role adminRole = roleRepository.findByName("ADMIN")
-                .orElseThrow(() -> new IllegalStateException("Роля ADMIN липсва."));
+                .orElseThrow(() -> new AdminUserActionException("Роля ADMIN липсва."));
+
+        boolean hasAdmin = user.getRoles().stream()
+                .anyMatch(r -> "ADMIN".equals(r.getName()));
+
+        if (!hasAdmin) {
+            return;
+        }
 
         user.getRoles().remove(adminRole);
         userRepository.save(user);
@@ -184,7 +211,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserProfileDto getProfile(String username) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("Потребителят не е намерен."));
+                .orElseThrow(() -> new UserNotFoundException("Потребителят не е намерен."));
 
         UserProfileDto dto = new UserProfileDto();
         dto.setUsername(user.getUsername());
@@ -196,17 +223,36 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void updateProfile(String username, UserProfileDto dto) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("Потребителят не е намерен."));
+                .orElseThrow(() -> new UserNotFoundException("Потребителят не е намерен."));
 
-        // ако имейлът се променя – проверка за зает имейл
         if (!user.getEmail().equals(dto.getEmail())
                 && userRepository.findByEmail(dto.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Имейлът вече е регистриран.");
+            throw new EmailAlreadyRegisteredException("Имейлът вече е регистриран.");
         }
 
         user.setEmail(dto.getEmail());
         userRepository.save(user);
+
     }
+
+    private User getUserByUsernameOrThrow(String username, String message) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new AdminUserActionException(message));
+    }
+
+    private User getUserByIdOrThrow(UUID id, String message) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new AdminUserActionException(message));
+    }
+
+    private void ensureAdmin(User admin) {
+        boolean isAdmin = admin.getRoles().stream()
+                .anyMatch(r -> "ADMIN".equals(r.getName()));
+        if (!isAdmin) {
+            throw new AdminUserActionException("Нямате права за тази операция.");
+        }
+    }
+
 
 }
 

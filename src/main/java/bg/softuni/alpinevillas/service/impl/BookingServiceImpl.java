@@ -5,6 +5,9 @@ import bg.softuni.alpinevillas.repositories.BookingRepository;
 import bg.softuni.alpinevillas.repositories.UserRepository;
 import bg.softuni.alpinevillas.repositories.VillaRepository;
 import bg.softuni.alpinevillas.service.BookingService;
+import bg.softuni.alpinevillas.service.exception.BookingCreateException;
+import bg.softuni.alpinevillas.service.exception.BookingMineActionException;
+import bg.softuni.alpinevillas.service.exception.BookingOwnerActionException;
 import bg.softuni.alpinevillas.web.dto.BookingCreateDto;
 import bg.softuni.alpinevillas.web.dto.BookingViewDto;
 import org.springframework.stereotype.Service;
@@ -43,16 +46,16 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new IllegalArgumentException("Потребителят не е намерен."));
 
         if (dto.getCheckIn() == null || dto.getCheckOut() == null) {
-            throw new IllegalArgumentException("Посочете валидни дати.");
+            throw new BookingCreateException(villaId, "Посочете валидни дати.");
         }
         if (!dto.getCheckIn().isBefore(dto.getCheckOut())) {
-            throw new IllegalArgumentException("Датите са невалидни!");
+            throw new BookingCreateException(villaId, "Датите са невалидни!");
         }
 
         boolean overlaps = bookingRepository.existsByVilla_IdAndCheckOutAfterAndCheckInBefore(
                 villaId, dto.getCheckIn(), dto.getCheckOut());
         if (overlaps) {
-            throw new IllegalStateException("Периодът е зает.");
+            throw new BookingCreateException(villaId, "Периодът е зает.");
         }
 
         long nights = java.time.temporal.ChronoUnit.DAYS.between(dto.getCheckIn(), dto.getCheckOut());
@@ -74,11 +77,11 @@ public class BookingServiceImpl implements BookingService {
                 booking.getCheckOut());
 
         if (villa.getOwner() != null && villa.getOwner().getUsername().equals(username)) {
-            throw new IllegalArgumentException("Не можете да резервирате собствената си вила.");
+            throw new BookingCreateException(villaId, "Не можете да резервирате собствената си вила.");
         }
 
         if (dto.getGuests() > villa.getCapacity()) {
-            throw new IllegalArgumentException("Гостите (" + dto.getGuests() + ") надвишават капацитета (" + villa.getCapacity() + ").");
+            throw new BookingCreateException(villaId, "Гостите (" + dto.getGuests() + ") надвишават капацитета (" + villa.getCapacity() + ").");
         }
 
         bookingRepository.save(booking);
@@ -128,13 +131,13 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public void confirm(UUID bookingId, String ownerUsername) {
         Booking b = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new IllegalArgumentException("Резервацията не е намерена."));
+                .orElseThrow(() -> new BookingOwnerActionException("Резервацията не е намерена."));
 
         if (!b.getVilla().getOwner().getUsername().equals(ownerUsername)) {
-            throw new IllegalStateException("Нямате права върху тази резервация.");
+            throw new BookingOwnerActionException("Нямате права върху тази резервация.");
         }
         if (b.getStatus() != BookingStatus.PENDING) {
-            throw new IllegalStateException("Само PENDING резервации могат да бъдат потвърдени.");
+            throw new BookingOwnerActionException("Само PENDING резервации могат да бъдат потвърдени.");
         }
 
         b.setStatus(BookingStatus.CONFIRMED);
@@ -144,13 +147,13 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public void decline(UUID bookingId, String ownerUsername) {
         Booking b = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new IllegalArgumentException("Резервацията не е намерена."));
+                .orElseThrow(() -> new BookingOwnerActionException("Резервацията не е намерена."));
 
         if (!b.getVilla().getOwner().getUsername().equals(ownerUsername)) {
-            throw new IllegalStateException("Нямате права върху тази резервация.");
+            throw new BookingOwnerActionException("Нямате права върху тази резервация.");
         }
         if (b.getStatus() != BookingStatus.PENDING) {
-            throw new IllegalStateException("Само PENDING резервации могат да бъдат отказани.");
+            throw new BookingOwnerActionException("Само PENDING резервации могат да бъдат отказани.");
         }
 
         b.setStatus(BookingStatus.CANCELLED);
@@ -160,20 +163,20 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public void cancel(UUID bookingId, String username) {
         Booking b = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new IllegalArgumentException("Резервацията не е намерена."));
+                .orElseThrow(() -> new BookingMineActionException("Резервацията не е намерена."));
 
         log.info("User {} cancelled booking {}",
                 b.getUser().getUsername(),
                 b.getId());
 
         if (!b.getUser().getUsername().equals(username)) {
-            throw new IllegalStateException("Това не е ваша резервация.");
+            throw new BookingMineActionException("Това не е ваша резервация.");
         }
         if (b.getStatus() != BookingStatus.PENDING) {
-            throw new IllegalStateException("Само PENDING резервации могат да се отменят.");
+            throw new BookingMineActionException("Само PENDING резервации могат да се отменят.");
         }
         if (!LocalDate.now().isBefore(b.getCheckIn())) {
-            throw new IllegalStateException("Не може да отмените в деня на настаняване или по-късно.");
+            throw new BookingMineActionException("Не може да отмените в деня на настаняване или по-късно.");
         }
 
         b.setStatus(BookingStatus.CANCELLED);

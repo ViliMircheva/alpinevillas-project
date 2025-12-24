@@ -22,7 +22,6 @@ public class Villa {
     @Column(nullable = false)
     private String region;
 
-    @Min(1)
     @Column(nullable = false)
     private Integer capacity;
 
@@ -117,5 +116,25 @@ public class Villa {
 
     public void setAmenities(Set<Amenity> amenities) {
         this.amenities = amenities;
+    }
+
+    public List<Booking> getBookings() {
+        return bookings;
+    }
+
+    public void setBookings(List<Booking> bookings) {
+        this.bookings = bookings;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Villa villa)) return false;
+        return id != null && id.equals(villa.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

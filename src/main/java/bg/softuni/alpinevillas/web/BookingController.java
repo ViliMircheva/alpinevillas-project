@@ -40,45 +40,24 @@ public class BookingController {
                       BindingResult br,
                       @AuthenticationPrincipal(expression = "username") String username,
                       Model model) {
-
-        if (username == null) {
-            return "redirect:/login";
-        }
-
         if (br.hasErrors()) {
             model.addAttribute("villa", villaService.getDetails(villaId));
             return "bookings/add";
         }
 
-        try {
-            bookingService.createBooking(villaId, username, booking);
-        } catch (IllegalArgumentException | IllegalStateException ex) {
-            model.addAttribute("villa", villaService.getDetails(villaId));
-            model.addAttribute("error", ex.getMessage());
-            return "bookings/add";
-        } catch (org.springframework.dao.DataIntegrityViolationException ex) {
-            model.addAttribute("villa", villaService.getDetails(villaId));
-            model.addAttribute("error", "Проблем при запис в базата: " + ex.getMostSpecificCause().getMessage());
-            return "bookings/add";
-        }
-
+        bookingService.createBooking(villaId, username, booking);
         return "redirect:/bookings/mine";
     }
 
+
     @GetMapping("/mine")
     public String mine(@AuthenticationPrincipal(expression = "username") String username, Model model) {
-        if (username == null) {
-            return "redirect:/login";
-        }
         model.addAttribute("bookings", bookingService.myBookings(username));
         return "bookings/mine";
     }
 
     @GetMapping("/owner")
     public String owner(@AuthenticationPrincipal(expression = "username") String username, Model model) {
-        if (username == null) {
-            return "redirect:/login";
-        }
         model.addAttribute("bookings", bookingService.ownerBookings(username));
         return "bookings/owner";
     }
@@ -87,12 +66,9 @@ public class BookingController {
     public String cancel(@PathVariable UUID id,
                          @AuthenticationPrincipal(expression = "username") String username,
                          RedirectAttributes ra) {
-        try {
-            bookingService.cancel(id, username);
-            ra.addFlashAttribute("msg", "Резервацията е отменена.");
-        } catch (RuntimeException ex) {
-            ra.addFlashAttribute("error", ex.getMessage());
-        }
+
+        bookingService.cancel(id, username);
+        ra.addFlashAttribute("msg", "Резервацията е отменена.");
         return "redirect:/bookings/mine";
     }
 
@@ -100,12 +76,9 @@ public class BookingController {
     public String confirm(@PathVariable UUID id,
                           @AuthenticationPrincipal(expression = "username") String ownerUsername,
                           RedirectAttributes ra) {
-        try {
-            bookingService.confirm(id, ownerUsername);
-            ra.addFlashAttribute("msg", "Резервацията е потвърдена.");
-        } catch (RuntimeException ex) {
-            ra.addFlashAttribute("error", ex.getMessage());
-        }
+
+        bookingService.confirm(id, ownerUsername);
+        ra.addFlashAttribute("msg", "Резервацията е потвърдена.");
         return "redirect:/bookings/owner";
     }
 
@@ -113,12 +86,9 @@ public class BookingController {
     public String decline(@PathVariable UUID id,
                           @AuthenticationPrincipal(expression = "username") String ownerUsername,
                           RedirectAttributes ra) {
-        try {
-            bookingService.decline(id, ownerUsername);
-            ra.addFlashAttribute("msg", "Резервацията е отказана.");
-        } catch (RuntimeException ex) {
-            ra.addFlashAttribute("error", ex.getMessage());
-        }
+
+        bookingService.decline(id, ownerUsername);
+        ra.addFlashAttribute("msg", "Резервацията е отказана.");
         return "redirect:/bookings/owner";
     }
 
