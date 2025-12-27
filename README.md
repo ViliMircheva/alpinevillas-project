@@ -5,6 +5,10 @@ AlpineVillas is a Spring Boot web application designed for users to browse, book
 
 The system communicates with an external microservice called **ReviewService**, which stores and manages villa reviews.
 
+Architecture
+Monolithic Spring Boot application with layered architecture (Controller, Service, Repository),
+integrated with an external Review microservice via REST (Feign Client).
+
 ---
 
 ## Tech Stack
