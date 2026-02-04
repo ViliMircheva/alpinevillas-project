@@ -1,0 +1,19 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\main",
+    "\\src\\main\\java",
+    "\\src\\main\\java\\bg",
+    "\\src\\main\\java\\bg\\softuni",
+    "\\src\\main\\java\\bg\\softuni\\alpinevillas",
+    "\\src\\main\\java\\bg\\softuni\\alpinevillas\\service",
+    "\\src\\test",
+    "\\src\\test\\java",
+    "\\src\\test\\java\\bg",
+    "\\src\\test\\java\\bg\\softuni",
+    "\\src\\test\\java\\bg\\softuni\\alpinevillas"
+  ],
+  "SelectedNode": "\\src\\main\\java\\bg\\softuni\\alpinevillas\\service\\BookingService.java",
+  "PreviewInSolutionExplorer": false
+}
