@@ -185,6 +185,81 @@ body.villas .overlay {
     background: #c9302c;
 }
 
+@media (max-width: 768px) {
+    .topbar .container {
+        flex-direction: column;
+        gap: 10px;
+        padding: 15px 0;
+    }
+
+    .brand {
+        font-size: 24px;
+        margin: 0;
+    }
+
+    .nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .nav a {
+        margin: 0 10px;
+        font-size: 14px;
+    }
+
+
+    .page-title {
+        font-size: 28px;
+        text-align: center;
+        margin-top: 20px;
+    }
+
+
+    .grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 10px 5px 30px;
+    }
+
+    .card__img {
+        height: 200px;
+    }
+
+    .card__body {
+        text-align: center;
+    }
+
+    .btn.ghost {
+        margin-left: 0;
+        margin-top: 10px;
+        display: block;
+    }
+}
+
+@media (max-width: 480px) {
+    .brand {
+        font-size: 20px;
+    }
+
+    .nav a {
+        font-size: 13px;
+    }
+
+    .card__actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .card__actions .btn,
+    .card__actions .btn-delete {
+        width: 100%;
+        margin: 0;
+    }
+}
+
 
 
 

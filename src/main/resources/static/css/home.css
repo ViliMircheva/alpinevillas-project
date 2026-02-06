@@ -8,7 +8,8 @@ html, body {
     height: 100%;
     font-family: 'Segoe UI', sans-serif;
     color: white;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 body {
@@ -49,15 +50,15 @@ body::after {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100dvh;
     text-align: center;
     position: relative;
     z-index: 1;
-    padding: 0 20px;
+    padding: 60px 20px;
 }
 
 .hero__brand {
-    font-size: 100px;
+    font-size: clamp(40px, 10vw, 100px);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 6px;
@@ -68,12 +69,13 @@ body::after {
             0 4px 12px rgba(0,0,0,0.8);
 }
 
-.hero__title {
+.hero__quote {
     font-size: 20px;
     max-width: 980px;
     line-height: 1.6;
     margin-bottom: 18px;
     color: #f1f1f1;
+    font-style: italic;
 }
 
 .hero__subtitle {
@@ -134,4 +136,55 @@ body::after {
     color: #ccc;
     font-size: 14px;
     z-index: 2;
+}
+@media (max-width: 768px) {
+    .hero {
+        min-height: 100vh;
+        height: auto;
+        padding: 100px 20px 60px;
+    }
+
+    .hero__cta {
+        flex-direction: column;
+        width: 100%;
+        max-width: 300px;
+        gap: 15px;
+    }
+
+    .hero__brand {
+        font-size: 38px;
+        letter-spacing: 3px;
+        margin-bottom: 25px;
+    }
+
+    .hero__title {
+        font-size: 16px;
+        line-height: 1.4;
+        padding: 0 10px;
+    }
+
+    .hero__subtitle {
+        font-size: 16px;
+        margin-bottom: 25px;
+    }
+
+    .hero__quote {
+        font-size: 16px;
+        max-width: 900px;
+        line-height: 1.5;
+        margin-bottom: 15px;
+        padding: 0 10px;
+        font-style: italic;
+    }
+
+    .btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .site-footer {
+        position: relative;
+        bottom: 0;
+        padding: 20px 0;
+    }
 }

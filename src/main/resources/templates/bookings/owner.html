@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Резервации за моите вили</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/css/owner.css}">
 </head>
 <body>
@@ -12,41 +13,39 @@
     <table>
         <thead>
         <tr>
-            <th>Вила</th><th>Местоположение</th><th>От</th><th>До</th><th>Гости</th><th>Статус</th>
+            <th>Вила</th><th>Местоположение</th><th>От</th><th>До</th><th>Гости</th><th>Статус</th><th>Действие</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="b : ${bookings}">
-            <td th:text="${b.villaName}">Villa</td>
-            <td th:text="${b.villaRegion}">Region</td>
-            <td th:text="${b.checkIn}">2025-01-01</td>
-            <td th:text="${b.checkOut}">2025-01-03</td>
-            <td th:text="${b.guests}">2</td>
-            <td th:switch="${b.status.name()}">
-                <span th:case="'PENDING'">PENDING</span>
-                <span th:case="'CONFIRMED'">CONFIRMED</span>
-                <span th:case="'CANCELLED'">CANCELLED</span>
-                <span th:case="'FINISHED'">FINISHED</span>
-                <span th:case="*">UNKNOWN</span>
+            <td data-label="Вила" th:text="${b.villaName}">Villa</td>
+            <td data-label="Местоположение" th:text="${b.villaRegion}">Region</td>
+            <td data-label="От" th:text="${b.checkIn}">2025-01-01</td>
+            <td data-label="До" th:text="${b.checkOut}">2025-01-03</td>
+            <td data-label="Гости" th:text="${b.guests}">2</td>
+            <td data-label="Статус">
+                <span th:switch="${b.status.name()}">
+                    <span th:case="'PENDING'">PENDING</span>
+                    <span th:case="'CONFIRMED'">CONFIRMED</span>
+                    <span th:case="'CANCELLED'">CANCELLED</span>
+                    <span th:case="'FINISHED'">FINISHED</span>
+                    <span th:case="*">UNKNOWN</span>
+                </span>
             </td>
-            <td>
-                <form th:if="${b.status == T(bg.softuni.alpinevillas.entities.BookingStatus).PENDING}"
+            <td data-label="Действие">
+                <form th:if="${b.status.name() == 'PENDING'}"
                       th:action="@{/bookings/{id}/confirm(id=${b.id})}"
                       method="post"
                       style="display:inline">
-                    <input type="hidden"
-                           th:name="${_csrf.parameterName}"
-                           th:value="${_csrf.token}"/>
-                    <button type="submit">Потвърди</button>
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit" style="background:#28a745; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; margin-bottom:5px;">Потвърди</button>
                 </form>
-                <form th:if="${b.status == T(bg.softuni.alpinevillas.entities.BookingStatus).PENDING}"
+                <form th:if="${b.status.name() == 'PENDING'}"
                       th:action="@{/bookings/{id}/decline(id=${b.id})}"
                       method="post"
                       style="display:inline">
-                    <input type="hidden"
-                           th:name="${_csrf.parameterName}"
-                           th:value="${_csrf.token}"/>
-                    <button type="submit">Откажи</button>
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit" style="background:#dc3545; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">Откажи</button>
                 </form>
             </td>
         </tr>

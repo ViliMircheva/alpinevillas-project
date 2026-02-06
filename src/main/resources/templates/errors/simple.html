@@ -1,9 +1,52 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8"><title th:text="${title}">Грешка</title></head>
+<html xmlns:th="http://www.thymeleaf.org" lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}">Грешка | AlpineVillas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            margin: 0; padding: 0; min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Segoe UI', sans-serif;
+            background: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1170&auto=format&fit=crop') center/cover no-repeat fixed;
+            color: white; text-align: center;
+        }
+        .overlay {
+            position: fixed; inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 0;
+        }
+        .error-card {
+            position: relative; z-index: 1;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: min(450px, 90vw);
+        }
+        h1 { font-size: 60px; margin: 0; color: #ff4d4d; }
+        p { font-size: 18px; margin: 20px 0; opacity: 0.9; }
+        .btn-home {
+            display: inline-block;
+            padding: 12px 25px;
+            background: #3a86ff;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .btn-home:hover { background: #265cc0; transform: scale(1.05); }
+    </style>
+</head>
 <body>
-<h1 th:text="${title}">Грешка</h1>
-<p th:text="${message}">Съобщение</p>
-<p><a th:href="@{/}">← Начало</a></p>
+<div class="overlay"></div>
+<div class="error-card">
+    <h1 th:text="${title != null ? title : '404'}">Грешка</h1>
+    <p th:text="${message != null ? message : 'Упс! Нещо се обърка.'}">Съобщение</p>
+    <a th:href="@{/}" class="btn-home">← Назад към началото</a>
+</div>
 </body>
 </html>

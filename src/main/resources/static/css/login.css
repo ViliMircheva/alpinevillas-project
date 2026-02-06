@@ -26,14 +26,14 @@ body {
 }
 
 .login-container {
-    height: 100vh;
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     z-index: 1;
     position: relative;
-    text-align: center;
+    padding: 20px;
 }
 
 .login-title {
@@ -64,6 +64,8 @@ input {
     border-radius: 8px;
     font-size: 16px;
     outline: none;
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
 }
 
 .btn {
@@ -91,4 +93,52 @@ input {
 .register-link a {
     color: #ffffff;
     text-decoration: underline;
+}
+.flash {
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    text-align: center;
+}
+.flash.success {
+    background: rgba(0, 196, 106, 0.2);
+    color: #00c46a;
+    border: 1px solid #00c46a;
+}
+.flash.error {
+    background: rgba(255, 0, 0, 0.15);
+    color: #ff7b7b;
+    border: 1px solid #ff4d4d;
+}
+
+@media (max-width: 768px) {
+    .login-container {
+        padding: 20px;
+    }
+
+    .login-title {
+        font-size: 32px;
+        margin-bottom: 20px;
+    }
+
+    .login-form {
+        padding: 30px 20px;
+        max-width: 100%;
+        border-radius: 12px;
+    }
+
+    input {
+        padding: 14px;
+        font-size: 16px;
+    }
+
+    .btn {
+        padding: 16px;
+        font-size: 17px;
+    }
+
+    .register-link {
+        font-size: 14px;
+    }
 }

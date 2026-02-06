@@ -3,40 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <title>Регистрация</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/css/app.css}">
     <style>
-        body{
-            margin:0;padding:0;height:100vh;
-            background-image:url('https://images.unsplash.com/photo-1516825994218-b2d93290b0fd?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170'); /* смени с твоя снимка */
-            background-size:cover;background-position:center;background-repeat:no-repeat;
-            display:flex;align-items:center;justify-content:center;
+        body {
+            margin: 0; padding: 20px 0; min-height: 100dvh;
+            background-image: url('https://images.unsplash.com/photo-1516825994218-b2d93290b0fd?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170');
+            background-size: cover; background-position: center; background-repeat: no-repeat;
+            display: flex; align-items: center; justify-content: center;
             font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
         }
-        .card{
-            width:400px;padding:32px;border-radius:16px;
-            background:rgba(20,20,20,0.85);color:#fff;
-            box-shadow:0 20px 40px rgba(0,0,0,0.35);backdrop-filter:blur(6px);
+        .card {
+            width: min(400px, 92vw); padding: 25px; border-radius: 16px;
+            background: rgba(20, 20, 20, 0.9); color: #fff;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.45); backdrop-filter: blur(8px);
         }
-        h1{margin:0 0 16px 0;text-align:center}
-        label{display:block;margin-top:10px;font-weight:600}
-        input{width:100%;padding:10px;margin-top:6px;border:none;border-radius:8px;background:rgba(255,255,255,0.12);color:#fff}
-        input:focus{outline:2px solid #2ea043;background:rgba(255,255,255,0.18)}
-        button{width:100%;margin-top:20px;padding:12px;border:none;border-radius:10px;background:#2ea043;color:#fff;font-weight:700;cursor:pointer}
-        button:hover{background:#34b14d}
-        .msg{font-weight:700;text-align:center;margin-bottom:8px}
-        .msg.green{color:#00ff9c}.msg.red{color:#ff7b7b}
-        .bottom{text-align:center;margin-top:12px}
-        .bottom a{color:#58a6ff;text-decoration:none}
-        .bottom a:hover{text-decoration:underline}
-        .err{color:#ff7b7b;font-size:0.9rem;margin-top:4px}
+
+        h1 { margin: 5px 0 15px 0; text-align: center; font-size: 1.6rem; color: #00ff9c;
+            text-shadow: 0 0 10px rgba(0, 255, 156, 0.3); }
+
+        label { display: block; margin-top: 8px; font-weight: 600; font-size: 0.9rem; }
+        input {
+            width: 100%; padding: 10px; margin-top: 5px; border: none; border-radius: 8px;
+            background: rgba(255,255,255,0.1); color: #fff !important; font-size: 15px;
+            box-sizing: border-box;
+        }
+        input:focus { outline: 2px solid #2ea043; background: rgba(255,255,255,0.15) }
+
+        button { width: 100%; margin-top: 18px; padding: 12px; border: none; border-radius: 10px; background: #2ea043; color: #fff; font-weight: 700; cursor: pointer; font-size: 1rem; }
+        button:hover { background: #34b14d }
+
+        .msg {
+            font-weight: 700; text-align: center; margin-bottom: 15px;
+            padding: 10px; border-radius: 8px; font-size: 0.95rem;
+        }
+        .msg.green { color: #00ff9c; background: rgba(0, 255, 156, 0.1); }
+        .msg.red { color: #ff7b7b; background: rgba(255, 123, 123, 0.1); }
+
+        .bottom { text-align: center; margin-top: 15px; font-size: 0.9rem; }
+        .bottom a { color: #58a6ff; text-decoration: none; }
+        .bottom a:hover { text-decoration: underline }
+        .err { color: #ff7b7b; font-size: 0.85rem; margin-top: 4px; }
+
+        @media (max-width: 480px) {
+            body { align-items: flex-start; padding-top: 40px; }
+            .card { padding: 20px; }
+        }
     </style>
 </head>
 <body>
 <div class="card">
-    <h1>Регистрация</h1>
-
     <div th:if="${msg}" class="msg green" th:text="${msg}"></div>
     <div th:if="${error}" class="msg red" th:text="${error}"></div>
+    <div th:if="${successMsg}" class="msg green" th:text="${successMsg}"></div>
+    <div th:if="${errorMsg}" class="msg red" th:text="${errorMsg}"></div>
+
+    <h1>Регистрация</h1>
 
     <form th:action="@{/register}" th:object="${user}" method="post">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
@@ -66,4 +88,3 @@
 </div>
 </body>
 </html>
-

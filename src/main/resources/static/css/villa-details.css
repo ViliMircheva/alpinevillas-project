@@ -104,17 +104,17 @@ body.details-page::after {
 
 .photo {
     grid-area: photo;
-    height: 240px;
+    width: 100%;
+    height: 350px;
     overflow: hidden;
-    border-radius: 14px;
-    margin-top: 10px;
+    border-radius: 18px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
 }
 
 .photo img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 14px;
     transition: transform 0.5s ease;
 }
 
@@ -227,4 +227,112 @@ body.details-page::after {
 
 .photo img:hover {
     transform: scale(1.04);
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        padding-top: 60px;
+        padding-bottom: 15px;
+    }
+
+    .title {
+        font-size: 28px;
+        line-height: 1.2;
+    }
+
+    .layout {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .photo {
+        width: 100%;
+        max-width: 100%;
+        height: 220px;
+        order: 1;
+    }
+
+    .price-card {
+        order: 2;
+        padding: 18px;
+    }
+
+    .desc {
+        order: 3;
+        padding: 18px;
+    }
+
+    .btn {
+        display: block;
+        width: 100%;
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .chips {
+        justify-content: center;
+    }
+
+    .reviews-section {
+        padding: 15px;
+        margin-top: 20px;
+    }
+
+    .villa-reviews form {
+        max-width: 100%;
+    }
+
+    .review-date {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .price {
+        font-size: 26px;
+    }
+
+    .meta li {
+        font-size: 14px;
+    }
+}
+
+.villa-reviews {
+    grid-column: 1 / -1;
+    background: rgba(20, 20, 22, 0.55);
+    backdrop-filter: blur(6px);
+    padding: 25px;
+    border-radius: 18px;
+    margin-top: 20px;
+}
+
+.review-list {
+    list-style: none;
+    margin-top: 20px;
+}
+
+.review-list li {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+}
+
+.villa-reviews form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 500px;
+}
+
+.villa-reviews select, .villa-reviews textarea {
+    padding: 10px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
 }

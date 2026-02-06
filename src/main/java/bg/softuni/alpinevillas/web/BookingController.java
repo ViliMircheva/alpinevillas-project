@@ -2,6 +2,7 @@ package bg.softuni.alpinevillas.web;
 
 import bg.softuni.alpinevillas.service.BookingService;
 import bg.softuni.alpinevillas.service.VillaService;
+import bg.softuni.alpinevillas.service.exception.BookingMineActionException;
 import bg.softuni.alpinevillas.web.dto.BookingCreateDto;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -66,9 +67,14 @@ public class BookingController {
     public String cancel(@PathVariable UUID id,
                          @AuthenticationPrincipal(expression = "username") String username,
                          RedirectAttributes ra) {
-
-        bookingService.cancel(id, username);
-        ra.addFlashAttribute("msg", "Резервацията е отменена.");
+        try {
+            bookingService.cancel(id, username);
+            ra.addFlashAttribute("successMsg", "Резервацията е отменена успешно.");
+        } catch (BookingMineActionException e) {
+            ra.addFlashAttribute("errorMsg", e.getMessage());
+        } catch (Exception e) {
+            ra.addFlashAttribute("errorMsg", "Възникна неочаквана грешка.");
+        }
         return "redirect:/bookings/mine";
     }
 

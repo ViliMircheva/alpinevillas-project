@@ -18,7 +18,7 @@
             <a th:href="@{/villas/add}">+ Добави вила</a>
             <form th:action="@{/logout}" method="post" style="display:inline">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                <button type="submit">Изход</button>
+                <button type="submit" style="background:none; border:none; color:#fff; font-weight:bold; cursor:pointer; font-family:inherit; font-size:14px; margin-left:18px;">Изход</button>
             </form>
         </nav>
     </div>

@@ -49,3 +49,71 @@ th {
 .btn-back:hover {
     background: rgba(255,255,255,0.2);
 }
+
+@media (max-width: 768px) {
+    .container {
+        padding: 40px 10px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    table, thead, tbody, th, td, tr {
+        display: block;
+        width: 100%;
+    }
+
+    thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    tr {
+        margin-bottom: 15px;
+        background: rgba(0,0,0,0.6);
+        border-radius: 10px;
+        padding: 10px;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    td {
+        border: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 5px;
+        text-align: right;
+    }
+
+    td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 12px;
+        opacity: 0.8;
+        text-align: left;
+    }
+
+    .btn-back {
+        display: block;
+        width: 100%;
+        font-size: 18px;
+        padding: 12px;
+        margin-top: 20px;
+    }
+
+    td[data-label="Действие"] {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    td form {
+        width: 100%;
+    }
+
+    td button {
+        width: 100%;
+    }
+}
